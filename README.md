@@ -1,6 +1,6 @@
 # python-virtualenv
 
-A conan recipe to build a python virtual environment. This should be used in conjunction with the [CMakePythonEnvironment](https://github.com/samuel-emrys/pyvenv) generator.
+A conan recipe to build a python virtual environment. This should be used in conjunction with the [CMakePythonDeps](https://github.com/samuel-emrys/pyvenv) generator.
 
 ## Usage
 
@@ -23,7 +23,7 @@ class VirtualenvConsumerConan(ConanFile):
         ])
 
     def generate(self):
-        py = self.python_requires["pyvenv"].module.CMakePythonEnvironment(self)
+        py = self.python_requires["pyvenv"].module.CMakePythonDeps(self)
         py.generate()
 ```
 
@@ -46,11 +46,11 @@ class VirtualenvConsumerConan(ConanFile):
             ])
 
     def generate(self):
-        py = self.python_requires["pyvenv"].module.CMakePythonEnvironment(self)
+        py = self.python_requires["pyvenv"].module.CMakePythonDeps(self)
         py.generate()
 ```
 
-Both of these examples utilise the [CMakePythonEnvironment](https://github.com/samuel-emrys/pyvenv) generator, which is shipped with the [pyvenv](https://github.com/samuel-emrys/pyvenv) python_requires package. This will generate CMake targets for the executables installed into this virtual environment.
+Both of these examples utilise the [CMakePythonDeps](https://github.com/samuel-emrys/pyvenv) generator, which is shipped with the [pyvenv](https://github.com/samuel-emrys/pyvenv) python_requires package. This will generate CMake targets for the executables installed into this virtual environment.
 
 A working exemplar recipe can be found in [`sphinx-consumer`](https://github.com/samuel-emrys/sphinx-consumer).
 
