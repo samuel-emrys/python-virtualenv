@@ -9,10 +9,11 @@ Below are two minimal examples of how to use this package. This essentially requ
 The first, below, demonstrates how to specify these requirements directly in the consumer `conanfile.py`:
 
 ```python
+from conan.tools.python import CMakePythonDeps
+
 class VirtualenvConsumerConan(ConanFile):
     name = "venv-consumer"
     version = "0.1.0"
-    python_requires = "pyvenv/0.1.0"
 
     def requirements(self):
         self.requires("python-virtualenv/system")
@@ -23,19 +24,20 @@ class VirtualenvConsumerConan(ConanFile):
         ])
 
     def generate(self):
-        py = self.python_requires["pyvenv"].module.CMakePythonDeps(self)
+        py = CMakePythonDeps(self)
         py.generate()
 ```
 
 The second, below, demonstrates how to read these requirements in from a `requirements.txt` that lives within the project root. Note that in this example, the `requirements.txt` file needs to be included in the `exports_sources` field in order to be read.
 
 ```python
+from conan.tools.python import CMakePythonDeps
+
 class VirtualenvConsumerConan(ConanFile):
     name = "venv-consumer"
     version = "0.1.0"
     # Sources are located in the same place as this recipe, copy them to the recipe
     exports_sources = "requirements.txt"
-    python_requires = "pyvenv/0.1.0"
 
     def requirements(self):
         self.requires("python-virtualenv/system")
@@ -46,11 +48,11 @@ class VirtualenvConsumerConan(ConanFile):
             ])
 
     def generate(self):
-        py = self.python_requires["pyvenv"].module.CMakePythonDeps(self)
+        py = CMakePythonDeps(self)
         py.generate()
 ```
 
-Both of these examples utilise the [CMakePythonDeps](https://github.com/samuel-emrys/pyvenv) generator, which is shipped with the [pyvenv](https://github.com/samuel-emrys/pyvenv) python_requires package. This will generate CMake targets for the executables installed into this virtual environment.
+Both of these examples utilise the [CMakePythonDeps](https://github.com/samuel-emrys/pyvenv) generator. This will generate CMake targets for the executables installed into this virtual environment.
 
 A working exemplar recipe can be found in [`sphinx-consumer`](https://github.com/samuel-emrys/sphinx-consumer).
 

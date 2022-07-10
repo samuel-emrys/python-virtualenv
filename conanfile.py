@@ -1,5 +1,6 @@
 from conans import ConanFile, tools
 from conans.errors import ConanInvalidConfiguration
+from conan.tools.python import PythonVirtualEnv
 import os
 import json
 import textwrap
@@ -18,7 +19,6 @@ class PythonVirtualEnvironment(ConanFile):
     options = {"requirements": "ANY"}
     default_options = {"requirements": "[]"}
 
-    python_requires = "pyvenv/0.1.0"
     # python venvs are not relocatable, so we will not have binaries for this on artifactory. Just build it on first use
     build_policy = "missing"
     _venv = None
@@ -32,9 +32,8 @@ class PythonVirtualEnvironment(ConanFile):
             )
 
     def _configure_venv(self):
-        venv = self.python_requires["pyvenv"].module.venv
         if not self._venv:
-            self._venv = venv(self)
+            self._venv = PythonVirtualEnv(self)
         return self._venv
 
     def package(self):
