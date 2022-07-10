@@ -8,12 +8,17 @@ import textwrap
 class PythonVirtualEnvironment(ConanFile):
     name = "python-virtualenv"
     version = "system"
-    description = "Sphinx is used to generate the help documentation"
+    description = "Install python packages into a virtual environment"
+    url = "https://github.com/samuel-emrys/python-virtualenv.git"
+    homepage = "https://github.com/samuel-emrys/python-virtualenv.git"
+    license = "MIT"
+    topics = ("python", "virtual environment", "venv")
+
     settings = "os_build", "arch_build", "os"
     options = {"requirements": "ANY"}
     default_options = {"requirements": "[]"}
 
-    build_requires = ["pyvenv/0.3.1"]
+    python_requires = "pyvenv/0.1.0"
     # python venvs are not relocatable, so we will not have binaries for this on artifactory. Just build it on first use
     build_policy = "missing"
     _venv = None
@@ -27,7 +32,7 @@ class PythonVirtualEnvironment(ConanFile):
             )
 
     def _configure_venv(self):
-        from pyvenv import venv
+        venv = self.python_requires["pyvenv"].module.venv
         if not self._venv:
             self._venv = venv(self)
         return self._venv
@@ -49,15 +54,12 @@ class PythonVirtualEnvironment(ConanFile):
                 )
             )
 
-        package_targets = {}
         for requirement in requirements:
             package = requirement.split("==")[0]
             # Ensure that there's an entry point for everything we've just installed.
             venv.setup_entry_points(
                 str(package), os.path.join(self.package_folder, "bin")
             )
-            entry_points = venv.entry_points(package)
-            package_targets[package] = entry_points.get("console_scripts", [])
 
     def package_info(self):
         self.user_info.python_requirements = self.options.get_safe("requirements", "[]")
