@@ -32,7 +32,7 @@ class PythonVirtualEnvironment(ConanFile):
             )
 
     def _configure_venv(self):
-        venv = self.python_requires["pyvenv"].module.venv
+        venv = self.python_requires["pyvenv"].module.PythonVirtualEnv
         if not self._venv:
             self._venv = venv(self)
         return self._venv
