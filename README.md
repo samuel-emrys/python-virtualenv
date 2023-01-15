@@ -4,6 +4,12 @@ A conan recipe to build a python virtual environment. This should be used in con
 
 ## Usage
 
+First, add the `mtolympus` remote to your conan configuration
+
+```
+$ conan remote add mtolympus-conan https://mtolympus.jfrog.io/artifactory/api/conan/mtolympus-conan
+```
+
 Below are two minimal examples of how to use this package. This essentially requires the consumer to specify this package as a requirement, and then to customise the environment by providing a JSON list of requirements to be installed into the python virtual environment.
 
 The first, below, demonstrates how to specify these requirements directly in the consumer `conanfile.py`:
@@ -12,10 +18,10 @@ The first, below, demonstrates how to specify these requirements directly in the
 class VirtualenvConsumerConan(ConanFile):
     name = "venv-consumer"
     version = "0.1.0"
-    python_requires = "pyvenv/0.1.0"
+    python_requires = "CMakePythonDeps/0.2.0@mtolympus/stable"
 
     def requirements(self):
-        self.requires("python-virtualenv/system")
+        self.requires("python-virtualenv/system@mtolympus/stable")
         # Specify the requirements directly within the consumer conanfile.py
         self.options["python-virtualenv"].requirements = json.dumps([
             "sphinx==5.0.1",
@@ -23,7 +29,7 @@ class VirtualenvConsumerConan(ConanFile):
         ])
 
     def generate(self):
-        py = self.python_requires["pyvenv"].module.CMakePythonDeps(self)
+        py = self.python_requires["CMakePythonDeps"].module.CMakePythonDeps(self)
         py.generate()
 ```
 
@@ -35,10 +41,10 @@ class VirtualenvConsumerConan(ConanFile):
     version = "0.1.0"
     # Sources are located in the same place as this recipe, copy them to the recipe
     exports_sources = "requirements.txt"
-    python_requires = "pyvenv/0.1.0"
+    python_requires = "CMakePythonDeps/0.2.0@mtolympus/stable"
 
     def requirements(self):
-        self.requires("python-virtualenv/system")
+        self.requires("python-virtualenv/system@mtolympus/stable")
         # Read the requirements from a requirements.txt within the project root
         with pathlib.Path("requirements.txt").open() as requirements_txt:
             self.options["python-virtualenv"].requirements = json.dumps([
@@ -46,7 +52,7 @@ class VirtualenvConsumerConan(ConanFile):
             ])
 
     def generate(self):
-        py = self.python_requires["pyvenv"].module.CMakePythonDeps(self)
+        py = self.python_requires["CMakePythonDeps"].module.CMakePythonDeps(self)
         py.generate()
 ```
 
