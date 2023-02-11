@@ -22,8 +22,8 @@ class PythonVirtualEnvironment(ConanFile):
     license = "MIT"
     topics = ("python", "virtual environment", "venv")
 
-    settings = "os_build", "arch_build", "os"
-    options = {"requirements": "ANY"}
+    settings = "arch", "os"
+    options = {"requirements": ["ANY"]}
     default_options = {"requirements": "[]"}
 
     python_requires = "pyvenv/0.1.0@mtolympus/stable"
@@ -62,7 +62,7 @@ class PythonVirtualEnvironment(ConanFile):
                 )
             )
 
-        bindir = "Scripts" if self.settings.os_build == "Windows" else "bin"
+        bindir = "Scripts" if self.settings.os == "Windows" else "bin"
         for requirement in requirements:
             package = requirement.split("==")[0]
             # Ensure that there's an entry point for everything we've just installed.
