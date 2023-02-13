@@ -20,7 +20,7 @@ jobs:
       - name: create package
         shell: bash
         run: |
-          conan create . system@mtolympus/stable
+          conan create . system@mtolympus/stable -pr:h default -pr:b default
       - name: deploy package
         if: github.ref == 'refs/heads/master' && success()
         shell: bash
@@ -45,4 +45,4 @@ jobs:
           conan remote add mtolympus https://mtolympus.jfrog.io/artifactory/api/conan/mtolympus-conan
       - name: create package
         run: |
-          conan create . mtolympus/stable
+          conan create . system@mtolympus/stable -pr:h default -pr:b default
