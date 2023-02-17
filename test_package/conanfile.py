@@ -22,13 +22,15 @@ class PythonVirtualenvTestConan(ConanFile):
 
     def test(self):
         if not cross_building(self):
-            path = "$PATH"
+            cmd = "echo $PATH"
             if self.settings.os == "Windows":
-                path = "%PATH%"
-            self.output.info(f"Executing `echo {path}` with env=\"conanrun\"")
-            self.run(f"echo {path}", env="conanrun")
-            self.output.info(f"Executing `echo {path}` with env=\"conanbuild\"")
-            self.run(f"echo {path}", env="conanbuild")
+                with open("echo_path.bat", "w") as f:
+                    f.write("echo %PATH%\n")
+                cmd = "echo_path.bat"
+            self.output.info(f"Executing `{cmd}` with env=\"conanrun\"")
+            self.run(cmd, env="conanrun")
+            self.output.info(f"Executing `{cmd}` with env=\"conanbuild\"")
+            self.run(cmd, env="conanbuild")
             # This should exist on the path in the build environment
             requirements = self.conf.get("user.env.pythonenv:requirements")
             env_dir = self.conf.get("user.env.pythonenv:dir")
