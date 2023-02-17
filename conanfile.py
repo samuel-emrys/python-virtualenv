@@ -67,7 +67,6 @@ class PythonVirtualEnvironment(ConanFile):
             )
 
     def package_info(self):
-
-        self.buildenv_info.prepend_path("PATH", os.path.join(self.package_folder, self._bindir))
+        self.cpp_info.bindirs = [self._bindir]
         self.conf_info.define("user.env.pythonenv:requirements", str(self.options.get_safe("requirements", "[]")))
         self.conf_info.define("user.env.pythonenv:dir", self.package_folder)
