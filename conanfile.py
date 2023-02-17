@@ -31,6 +31,10 @@ class PythonVirtualEnvironment(ConanFile):
                 "Failed to parse requirements. Ensure requirements are passed as valid JSON."
             )
 
+    @property
+    def _bindir(self):
+        return "Scripts" if self.settings.os == "Windows" else "bin"
+
     def _configure_venv(self):
         venv = self.python_requires["pyvenv"].module.PythonVirtualEnv
         if not self._venv:
@@ -55,14 +59,15 @@ class PythonVirtualEnvironment(ConanFile):
                 )
             )
 
-        bindir = "Scripts" if self.settings.os == "Windows" else "bin"
         for requirement in requirements:
             package = requirement.split("==")[0]
             # Ensure that there's an entry point for everything we've just installed.
             venv.setup_entry_points(
-                str(package), os.path.join(self.package_folder, bindir)
+                str(package), os.path.join(self.package_folder, self._bindir)
             )
 
     def package_info(self):
+
+        self.buildenv_info.prepend_path("PATH", os.path.join(self.package_folder, self._bindir))
         self.conf_info.define("user.env.pythonenv:requirements", str(self.options.get_safe("requirements", "[]")))
         self.conf_info.define("user.env.pythonenv:dir", self.package_folder)
