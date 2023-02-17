@@ -5,14 +5,6 @@ import sys
 import json
 import textwrap
 
-def _args_to_string(args):
-    if not args:
-        return ""
-    if sys.platform == 'win32':
-        return subprocess.list2cmdline(args)
-    else:
-        return " ".join("'" + arg.replace("'", r"'\''") + "'" for arg in args)
-
 class PythonVirtualEnvironment(ConanFile):
     name = "python-virtualenv"
     version = "system"
@@ -26,7 +18,7 @@ class PythonVirtualEnvironment(ConanFile):
     options = {"requirements": ["ANY"]}
     default_options = {"requirements": "[]"}
 
-    python_requires = "pyvenv/0.1.0@mtolympus/stable"
+    python_requires = "pyvenv/[>=0.1.1]@mtolympus/stable"
     # python venvs are not relocatable, so we will not have binaries for this on artifactory. Just build it on first use
     build_policy = "missing"
     _venv = None
@@ -39,6 +31,10 @@ class PythonVirtualEnvironment(ConanFile):
                 "Failed to parse requirements. Ensure requirements are passed as valid JSON."
             )
 
+    @property
+    def _bindir(self):
+        return "Scripts" if self.settings.os == "Windows" else "bin"
+
     def _configure_venv(self):
         venv = self.python_requires["pyvenv"].module.PythonVirtualEnv
         if not self._venv:
@@ -46,6 +42,7 @@ class PythonVirtualEnvironment(ConanFile):
         return self._venv
 
     def package(self):
+        args_to_string = self.python_requires["pyvenv"].module._args_to_string
         # Create the virtualenv in the package method because virtualenv's are not relocatable.
         venv = self._configure_venv()
         venv.create(folder=os.path.join(self.package_folder))
@@ -53,7 +50,7 @@ class PythonVirtualEnvironment(ConanFile):
         requirements = json.loads(str(self.options.get_safe("requirements", "[]")))
         if requirements:
             self.run(
-                _args_to_string(
+                args_to_string(
                     [
                         venv.pip,
                         "install",
@@ -62,14 +59,14 @@ class PythonVirtualEnvironment(ConanFile):
                 )
             )
 
-        bindir = "Scripts" if self.settings.os == "Windows" else "bin"
         for requirement in requirements:
             package = requirement.split("==")[0]
             # Ensure that there's an entry point for everything we've just installed.
             venv.setup_entry_points(
-                str(package), os.path.join(self.package_folder, bindir)
+                str(package), os.path.join(self.package_folder, self._bindir)
             )
 
     def package_info(self):
+        self.cpp_info.bindirs = [self._bindir]
         self.conf_info.define("user.env.pythonenv:requirements", str(self.options.get_safe("requirements", "[]")))
         self.conf_info.define("user.env.pythonenv:dir", self.package_folder)
