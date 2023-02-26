@@ -11,13 +11,14 @@ class PythonVirtualenvTestConan(ConanFile):
     apply_env = False
     test_type = "explicit"
 
+    def configure(self):
+        self.options["python-virtualenv"].requirements = json.dumps([
+            "sphinx",
+            "sphinx-rtd-theme",
+        ])
+
     def build_requirements(self):
-        self.tool_requires(self.tested_reference_str, options={
-            "requirements": json.dumps([
-                "sphinx",
-                "sphinx-rtd-theme",
-            ])
-        })
+        self.tool_requires(self.tested_reference_str)
 
     def test(self):
         if not cross_building(self):

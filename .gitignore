@@ -1,2 +1,13 @@
 # Build
 build/
+
+# Conan
+conanbuild.sh
+conanbuildenv-release-x86_64.sh
+conanrun.sh
+conanrunenv-release-x86_64.sh
+deactivate_conanbuild.sh
+deactivate_conanbuildenv-release-x86_64.sh
+deactivate_conanrun.sh
+deactivate_conanrunenv-release-x86_64.sh
+
