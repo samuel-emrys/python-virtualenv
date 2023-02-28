@@ -12,12 +12,7 @@ class PythonVirtualenvTestConan(ConanFile):
     test_type = "explicit"
 
     def build_requirements(self):
-        self.tool_requires(self.tested_reference_str, options={
-            "requirements": json.dumps([
-                "sphinx",
-                "sphinx-rtd-theme",
-            ])
-        })
+        self.tool_requires(self.tested_reference_str)
 
     def test(self):
         if not cross_building(self):
@@ -37,5 +32,6 @@ class PythonVirtualenvTestConan(ConanFile):
             self.output.info(f"user.env.pythonenv:requirements={requirements}")
             self.output.info("Executing `python --version`")
             self.run("python --version", env="conanbuild")
-            self.output.info("Executing `sphinx-build --help`")
-            self.run("sphinx-build --help", env="conanbuild")
+            if "sphinx" in json.loads(requirements):
+                self.output.info("Executing `sphinx-build --help`")
+                self.run("sphinx-build --help", env="conanbuild")

@@ -28,7 +28,7 @@ class PythonVirtualEnvironment(ConanFile):
             json.loads(str(self.options.requirements))
         except Exception as e:
             raise ConanInvalidConfiguration(
-                "Failed to parse requirements. Ensure requirements are passed as valid JSON."
+                f"Failed to parse requirements '{self.options.requirements}'. Ensure requirements are passed as valid JSON."
             )
 
     @property
