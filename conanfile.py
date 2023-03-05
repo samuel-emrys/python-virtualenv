@@ -21,6 +21,7 @@ class PythonVirtualEnvironment(ConanFile):
     python_requires = "pyvenv/[>=0.1.1]@mtolympus/stable"
     # python venvs are not relocatable, so we will not have binaries for this on artifactory. Just build it on first use
     build_policy = "missing"
+    upload_policy = "skip"
     _venv = None
 
     def validate(self):
