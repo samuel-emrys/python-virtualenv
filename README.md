@@ -1,6 +1,6 @@
 # python-virtualenv
 
-A conan recipe to build a python virtual environment. This should be used in conjunction with the [CMakePythonDeps](https://github.com/samuel-emrys/pyvenv) generator.
+A conan recipe to build a python virtual environment. This should be used in conjunction with the [CMakePythonDeps](https://github.com/samuel-emrys/cmake-python-deps) generator.
 
 ## Usage
 

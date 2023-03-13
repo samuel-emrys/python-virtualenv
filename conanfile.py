@@ -1,5 +1,6 @@
 from conan import ConanFile
 from conan.errors import ConanInvalidConfiguration
+from conan.tools.files import copy
 import os
 import sys
 import json
@@ -18,8 +19,9 @@ class PythonVirtualEnvironment(ConanFile):
     options = {"requirements": ["ANY"]}
     default_options = {"requirements": "[]"}
 
-    python_requires = "pyvenv/[>=0.1.1]@mtolympus/stable"
-    # python venvs are not relocatable, so we will not have binaries for this on artifactory. Just build it on first use
+    python_requires = "pyvenv/[>=0.2.2]@mtolympus/stable"
+    # python venvs are not relocatable across environments, so we will not have binaries for this on artifactory.
+    # Just build it on first use
     build_policy = "missing"
     upload_policy = "skip"
     _venv = None
@@ -42,30 +44,14 @@ class PythonVirtualEnvironment(ConanFile):
             self._venv = venv(self)
         return self._venv
 
-    def package(self):
-        args_to_string = self.python_requires["pyvenv"].module._args_to_string
-        # Create the virtualenv in the package method because virtualenv's are not relocatable.
-        venv = self._configure_venv()
-        venv.create(folder=os.path.join(self.package_folder))
-
+    def build(self):
+        args_to_string = self.python_requires["pyvenv"].module.args_to_string
         requirements = json.loads(str(self.options.get_safe("requirements", "[]")))
-        if requirements:
-            self.run(
-                args_to_string(
-                    [
-                        venv.pip,
-                        "install",
-                        *(requirement for requirement in requirements),
-                    ]
-                )
-            )
+        venv = self._configure_venv()
+        venv.create(folder=os.path.join(self.package_folder), requirements=requirements)
 
-        for requirement in requirements:
-            package = requirement.split("==")[0]
-            # Ensure that there's an entry point for everything we've just installed.
-            venv.setup_entry_points(
-                str(package), os.path.join(self.package_folder, self._bindir)
-            )
+    def package(self):
+        copy(self, "*", src=self.build_folder, dst=self.package_folder)
 
     def package_info(self):
         self.cpp_info.bindirs = [self._bindir]
