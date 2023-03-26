@@ -1,6 +1,6 @@
 # python-virtualenv
 
-A conan recipe to build a python virtual environment. This should be used in conjunction with the [CMakePythonDeps](https://github.com/samuel-emrys/pyvenv) generator.
+A conan recipe to build a python virtual environment. This should be used in conjunction with the [CMakePythonDeps](https://github.com/samuel-emrys/cmake-python-deps) generator.
 
 ## Usage
 
@@ -18,7 +18,7 @@ The first, below, demonstrates how to specify these requirements directly in the
 class VirtualenvConsumerConan(ConanFile):
     name = "venv-consumer"
     version = "0.1.0"
-    python_requires = "CMakePythonDeps/0.2.0@mtolympus/stable"
+    python_requires = "cmake-python-deps/[>=0.3.0]@mtolympus/stable"
 
     def requirements(self):
         self.requires("python-virtualenv/system@mtolympus/stable")
@@ -29,7 +29,7 @@ class VirtualenvConsumerConan(ConanFile):
         ])
 
     def generate(self):
-        py = self.python_requires["CMakePythonDeps"].module.CMakePythonDeps(self)
+        py = self.python_requires["cmake-python-deps"].module.CMakePythonDeps(self)
         py.generate()
 ```
 
@@ -41,7 +41,7 @@ class VirtualenvConsumerConan(ConanFile):
     version = "0.1.0"
     # Sources are located in the same place as this recipe, copy them to the recipe
     exports_sources = "requirements.txt"
-    python_requires = "CMakePythonDeps/0.2.0@mtolympus/stable"
+    python_requires = "cmake-python-deps/[>=0.3.0]@mtolympus/stable"
 
     def requirements(self):
         self.requires("python-virtualenv/system@mtolympus/stable")
@@ -52,7 +52,7 @@ class VirtualenvConsumerConan(ConanFile):
             ])
 
     def generate(self):
-        py = self.python_requires["CMakePythonDeps"].module.CMakePythonDeps(self)
+        py = self.python_requires["cmake-python-deps"].module.CMakePythonDeps(self)
         py.generate()
 ```
 

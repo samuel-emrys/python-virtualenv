@@ -11,6 +11,12 @@ class PythonVirtualenvTestConan(ConanFile):
     apply_env = False
     test_type = "explicit"
 
+    def configure(self):
+        self.options["python-virtualenv"].requirements = json.dumps([
+            "sphinx",
+            "sphinx-rtd-theme",
+        ])
+
     def build_requirements(self):
         self.tool_requires(self.tested_reference_str)
 
@@ -32,6 +38,5 @@ class PythonVirtualenvTestConan(ConanFile):
             self.output.info(f"user.env.pythonenv:requirements={requirements}")
             self.output.info("Executing `python --version`")
             self.run("python --version", env="conanbuild")
-            if "sphinx" in json.loads(requirements):
-                self.output.info("Executing `sphinx-build --help`")
-                self.run("sphinx-build --help", env="conanbuild")
+            self.output.info("Executing `sphinx-build --help`")
+            self.run("sphinx-build --help", env="conanbuild")
